@@ -7,13 +7,15 @@ EVO_Limit_Param evo_limit_param[EVO_Num_Of_Model] = {
 };
 
 EvoMotorDriver::EvoMotorDriver(uint16_t motor_id, const std::string& interface_type, const std::string& can_interface,
-                               EVO_Motor_Model motor_model)
+                               EVO_Motor_Model motor_model, double motor_zero_offset)
     : MotorDriver(), can_(SocketCAN::get(can_interface)), motor_model_(motor_model) {
     if (interface_type != "can") {
         throw std::runtime_error("EVO driver only support CAN interface");
     }
     motor_id_ = motor_id;
     limit_param_ = evo_limit_param[motor_model_];
+    can_interface_ = can_interface;
+    motor_zero_offset_ = motor_zero_offset;
     CanCbkFunc can_callback = std::bind(&EvoMotorDriver::can_rx_cbk, this, std::placeholders::_1);
     can_->add_can_callback(can_callback, motor_id_);
 }
@@ -144,7 +146,7 @@ void EvoMotorDriver::can_rx_cbk(const can_frame& rx_frame) {
     mos_temperature_ = rx_frame.data[7];
     
     motor_pos_ = range_map(pos_int, uint16_t(0), bitmax<uint16_t>(16), 
-                          -limit_param_.PosMax, limit_param_.PosMax);
+                          -limit_param_.PosMax, limit_param_.PosMax) + motor_zero_offset_;
     motor_spd_ = range_map(spd_int, uint16_t(0), bitmax<uint16_t>(12), 
                           -limit_param_.SpdMax, limit_param_.SpdMax);
     
@@ -181,6 +183,7 @@ void EvoMotorDriver::motor_mit_cmd(float f_p, float f_v, float f_kp, float f_kd,
     uint16_t p, v, kp, kd, t;
     can_frame tx_frame;
 
+    f_p -= motor_zero_offset_;
     f_p = limit(f_p, -limit_param_.PosMax, limit_param_.PosMax);
     f_v = limit(f_v, -limit_param_.SpdMax, limit_param_.SpdMax);
     f_kp = limit(f_kp, 0.0f, limit_param_.OKpMax);
@@ -196,26 +199,14 @@ void EvoMotorDriver::motor_mit_cmd(float f_p, float f_v, float f_kp, float f_kd,
     tx_frame.can_id = motor_id_;
     tx_frame.can_dlc = 0x08;
 
-    if (motor_model_ == EVO431040) {
-        tx_frame.data[0] = p >> 8;
-        tx_frame.data[1] = p & 0xFF;
-        tx_frame.data[2] = v >> 4;
-        tx_frame.data[3] = (v & 0x0F) << 4 | kp >> 8;
-        tx_frame.data[4] = kp & 0xFF;
-        tx_frame.data[5] = kd >> 4;
-        tx_frame.data[6] = (kd & 0x0F) << 4 | t >> 8;
-        tx_frame.data[7] = t & 0xFF;
-    } else {
-        uint8_t switch_user_mode = 0;
-        tx_frame.data[0] = ((switch_user_mode & 0x07) << 5) | ((kp >> 7) & 0x1F);
-        tx_frame.data[1] = ((kp & 0x7F) << 1) | ((kd >> 8) & 0x01);
-        tx_frame.data[2] = kd & 0xFF;
-        tx_frame.data[3] = (p >> 8) & 0xFF;
-        tx_frame.data[4] = p & 0xFF;
-        tx_frame.data[5] = (v >> 4) & 0xFF;
-        tx_frame.data[6] = ((v & 0x0F) << 4) | ((t >> 8) & 0x0F);
-        tx_frame.data[7] = t & 0xFF;
-    }
+    tx_frame.data[0] = p >> 8;
+    tx_frame.data[1] = p & 0xFF;
+    tx_frame.data[2] = v >> 4;
+    tx_frame.data[3] = (v & 0x0F) << 4 | kp >> 8;
+    tx_frame.data[4] = kp & 0xFF;
+    tx_frame.data[5] = kd >> 4;
+    tx_frame.data[6] = (kd & 0x0F) << 4 | t >> 8;
+    tx_frame.data[7] = t & 0xFF;
 
     can_->transmit(tx_frame);
     {

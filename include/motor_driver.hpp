@@ -29,7 +29,7 @@ class MotorDriver {
     virtual ~MotorDriver() = default;
 
     static std::shared_ptr<MotorDriver> create_motor(uint16_t motor_id, const std::string& interface_type, const std::string& interface,
-                                                    const std::string& motor_type, const int motor_model, uint16_t master_id_offset=0);
+                                                    const std::string& motor_type, const int motor_model, uint16_t master_id_offset=0, const double motor_zero_offset=0.0);
 
     /**
      * @brief Locks the motor to prevent movement.
@@ -213,12 +213,12 @@ class MotorDriver {
    protected:
     std::shared_ptr<spdlog::logger> logger_;
     uint16_t motor_id_;
-    uint16_t master_id_;
 
     uint8_t motor_control_mode_;  // 0:none 1:pos 2:spd 3:mit
 
     std::atomic<uint8_t> error_id_{0};
 
+    double motor_zero_offset_;
     std::atomic<float> motor_pos_{0.f};
     std::atomic<float> motor_spd_{0.f};
     std::atomic<float> motor_current_{0.f};

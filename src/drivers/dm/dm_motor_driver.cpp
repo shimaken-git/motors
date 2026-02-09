@@ -7,7 +7,7 @@ DM_Limit_Param limit_param[Num_Of_Motor] = {
 };
 
 DmMotorDriver::DmMotorDriver(uint16_t motor_id, const std::string& interface_type, const std::string& can_interface, uint16_t master_id_offset,
-                             DM_Motor_Model motor_model)
+                             DM_Motor_Model motor_model, double motor_zero_offset)
     : MotorDriver(), can_(SocketCAN::get(can_interface)), motor_model_(motor_model) {
     if (interface_type != "can") {
         throw std::runtime_error("DM driver only support CAN interface");
@@ -16,6 +16,7 @@ DmMotorDriver::DmMotorDriver(uint16_t motor_id, const std::string& interface_typ
     master_id_ = motor_id_ + master_id_offset;
     limit_param_ = limit_param[motor_model_];
     can_interface_ = can_interface;
+    motor_zero_offset_ = motor_zero_offset;
     CanCbkFunc can_callback = std::bind(&DmMotorDriver::can_rx_cbk, this, std::placeholders::_1);
     can_->add_can_callback(can_callback, master_id_);
 }
@@ -148,7 +149,7 @@ void DmMotorDriver::can_rx_cbk(const can_frame& rx_frame) {
         }
     }
     motor_pos_ =
-        range_map(pos_int, uint16_t(0), bitmax<uint16_t>(16), -limit_param_.PosMax, limit_param_.PosMax);
+        range_map(pos_int, uint16_t(0), bitmax<uint16_t>(16), -limit_param_.PosMax, limit_param_.PosMax) + motor_zero_offset_;
     motor_spd_ =
         range_map(spd_int, uint16_t(0), bitmax<uint16_t>(12), -limit_param_.SpdMax, limit_param_.SpdMax);
     motor_current_ =
@@ -187,6 +188,7 @@ void DmMotorDriver::motor_pos_cmd(float pos, float spd, bool ignore_limit) {
     tx_frame.can_dlc = 0x08;
     uint8_t *pbuf, *vbuf;
 
+    pos -= motor_zero_offset_;
     spd = limit(spd, -limit_param_.SpdMax, limit_param_.SpdMax);
     pos = limit(pos, -limit_param_.PosMax, limit_param_.PosMax);
 
@@ -240,6 +242,7 @@ void DmMotorDriver::motor_mit_cmd(float f_p, float f_v, float f_kp, float f_kd, 
     uint16_t p, v, kp, kd, t;
     can_frame tx_frame;
 
+    f_p -= motor_zero_offset_;
     f_p = limit(f_p, -limit_param_.PosMax, limit_param_.PosMax);
     f_v = limit(f_v, -limit_param_.SpdMax, limit_param_.SpdMax);
     f_kp = limit(f_kp, 0.0f, limit_param_.OKpMax);

@@ -82,7 +82,7 @@ typedef struct {
 class DmMotorDriver : public MotorDriver {
    public:
     DmMotorDriver(uint16_t motor_id, const std::string& interface_type, const std::string& can_interface, uint16_t master_id_offset,
-                  DM_Motor_Model motor_model);
+                  DM_Motor_Model motor_model, double motor_zero_offset = 0.0);
     ~DmMotorDriver();
 
     virtual void lock_motor() override;

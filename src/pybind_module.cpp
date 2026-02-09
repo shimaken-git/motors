@@ -21,7 +21,8 @@ PYBIND11_MODULE(motors_py, m) {
             py::arg("interface"),
             py::arg("motor_type"),
             py::arg("motor_model"),
-            py::arg("master_id_offset") = 0)
+            py::arg("master_id_offset") = 0,
+            py::arg("motor_zero_offset") = 0.0)
         .def("lock_motor", &MotorDriver::lock_motor)
         .def("unlock_motor", &MotorDriver::unlock_motor)
         .def("init_motor", &MotorDriver::init_motor)

@@ -64,7 +64,7 @@ typedef struct {
 class EvoMotorDriver : public MotorDriver {
    public:
     EvoMotorDriver(uint16_t motor_id, const std::string& interface_type, const std::string& can_interface,
-                   EVO_Motor_Model motor_model);
+                   EVO_Motor_Model motor_model, double motor_zero_offset = 0.0);
     ~EvoMotorDriver();
 
     virtual void lock_motor() override;
@@ -96,4 +96,5 @@ class EvoMotorDriver : public MotorDriver {
     void save_register_evo();
     virtual void can_rx_cbk(const can_frame& rx_frame);
     std::shared_ptr<SocketCAN> can_;
+    std::string can_interface_;
 };
