@@ -1,9 +1,9 @@
 #include "evo_motor_driver.hpp"
 
 EVO_Limit_Param evo_limit_param[EVO_Num_Of_Model] = {
-    {12.5, 20.0, 18.0, 250.0, 50.0},   // EVO431040
-    {12.5, 10.0, 50.0, 250.0, 5.0},    // EVO811825
-    {12.5, 10.0, 50.0, 250.0, 5.0},    // EVO811832
+    {12.5, 20.0, 18.0, 500.0, 5.0},     // EVO431040
+    {12.5, 10.0, 50.0, 250.0, 50.0},    // EVO811825
+    {12.5, 10.0, 50.0, 250.0, 50.0},    // EVO811832
 };
 
 EvoMotorDriver::EvoMotorDriver(uint16_t motor_id, const std::string& interface_type, const std::string& can_interface,
