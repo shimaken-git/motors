@@ -1,7 +1,7 @@
 // RobMotorDriver.cpp
 #include "rob_motor_driver.hpp"
 
-ROB_Limit_Param limit_param[ROB_Num_Of_Model] = {
+ROB_Limit_Param rob_limit_param[ROB_Num_Of_Model] = {
     {12.5, 33, 14, 500, 5},   // RS00_48V   operation control mode
     {12.5, 33, 60, 5000, 100},  // RS03_48V   operation control mode
     {12.5, 20, 36, 5000, 100},  // RS06_48V   operation control mode
@@ -15,7 +15,7 @@ RobMotorDriver::RobMotorDriver(uint16_t motor_id, const std::string& interface_t
     }
     motor_id_ = motor_id;
     // master_id_ = motor_id_ + master_id_offset;
-    limit_param_ = limit_param[motor_model_];
+    limit_param_ = rob_limit_param[motor_model_];
     can_interface_ = can_interface;
     motor_zero_offset_ = motor_zero_offset;
     CanCbkFunc can_callback = std::bind(&RobMotorDriver::can_rx_cbk, this, std::placeholders::_1);
