@@ -2,6 +2,7 @@
 
 #include "dm_motor_driver.hpp"
 #include "evo_motor_driver.hpp"
+#include "rob_motor_driver.hpp"
 
 MotorDriver::MotorDriver() {
     std::vector<spdlog::sink_ptr> sinks;
@@ -16,6 +17,9 @@ std::shared_ptr<MotorDriver> MotorDriver::create_motor(uint16_t motor_id, const 
     } else if (motor_type == "EVO") { 
         return std::make_shared<EvoMotorDriver>(motor_id, interface_type, interface,
                                                 static_cast<EVO_Motor_Model>(motor_model), motor_zero_offset);
+    } else if (motor_type == "ROB") { 
+        return std::make_shared<RobMotorDriver>(motor_id, interface_type, interface,
+                                                static_cast<ROB_Motor_Model>(motor_model), motor_zero_offset);
     } else {
         throw std::runtime_error("Motor type not supported");
     }
