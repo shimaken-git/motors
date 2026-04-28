@@ -56,7 +56,11 @@ class MotorsSocketCAN {
     CanCbkMap can_callback_list_;
     std::mutex can_callback_mutex_;
     CanCbkKeyExtractor key_extractor_ = [](const can_frame &frame) -> CanCbkId {
-        return static_cast<CanCbkId>(frame.can_id);
+        if(frame.can_id & CAN_EFF_FLAG){
+            return static_cast<CanCbkId>((frame.can_id & 0xff00) >> 8);
+        }else{
+            return static_cast<CanCbkId>(frame.can_id);
+        }
     };
 
     /// Transmitting

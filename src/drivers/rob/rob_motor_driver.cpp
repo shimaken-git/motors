@@ -102,7 +102,7 @@ void RobMotorDriver::can_rx_cbk(const can_frame& rx_frame) {
     extra_data = rx_frame.can_id;
     host_id_t = extra_data & 0xff;
     device_id_t = (extra_data & 0x0000ff00) >> 8;
-    uint16_t err = (extra_data & 0x00ff0000) >> 16;
+    uint16_t err = (extra_data & 0x003f0000) >> 16;
     if (err) {  // error flag is valid
         error_id_ = err;
             if (logger_) {
@@ -217,7 +217,7 @@ void RobMotorDriver::motor_mit_cmd(float f_p, float f_v, float f_kp, float f_kd,
     kd = range_map(f_kd, 0.0f, limit_param_.OKdMax, uint16_t(0), bitmax<uint16_t>(16));
     t = range_map(f_t, -limit_param_.TauMax, limit_param_.TauMax, uint16_t(0), bitmax<uint16_t>(16));
 
-    tx_frame.can_id = motor_id_ | CAN_EFF_FLAG | t | 0x1000000;   // extended frame compatible
+    tx_frame.can_id = motor_id_ | CAN_EFF_FLAG | t << 8 | ROB_CMD::ROB_CONTROL;   // extended frame compatible
     tx_frame.can_dlc = 0x08;
 
     tx_frame.data[0] = p >> 8;
