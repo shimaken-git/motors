@@ -214,7 +214,7 @@ class MotorDriver {
     std::shared_ptr<spdlog::logger> logger_;
     uint16_t motor_id_;
 
-    uint8_t motor_control_mode_;  // 0:none 1:pos 2:spd 3:mit
+    uint8_t motor_control_mode_;
 
     std::atomic<uint8_t> error_id_{0};
 

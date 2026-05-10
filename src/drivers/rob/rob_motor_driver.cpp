@@ -14,7 +14,7 @@ RobMotorDriver::RobMotorDriver(uint16_t motor_id, const std::string& interface_t
         throw std::runtime_error("ROB driver only support CAN interface");
     }
     motor_id_ = motor_id;
-    // master_id_ = motor_id_ + master_id_offset;
+    master_id_ = motor_id_;
     limit_param_ = rob_limit_param[motor_model_];
     can_interface_ = can_interface;
     motor_zero_offset_ = motor_zero_offset;
