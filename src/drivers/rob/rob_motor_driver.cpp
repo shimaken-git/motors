@@ -86,6 +86,12 @@ bool RobMotorDriver::set_motor_zero() {
     // disable motor
 }
 
+bool RobMotorDriver::set_motor_offset(float offset) {
+    // send set offset command
+    RobMotorDriver::write_register_rob(ROB_REG::ZERO_OFFSET, offset);
+    return true;
+}
+
 void RobMotorDriver::can_rx_cbk(const can_frame& rx_frame) {
     {
         response_count_ = 0;
@@ -254,8 +260,14 @@ void RobMotorDriver::set_motor_zero_rob() {
 
 void RobMotorDriver::clear_motor_error_rob() {
     can_frame tx_frame;
-    tx_frame.can_id = motor_id_ | CAN_EFF_FLAG;  // change according to the mode  extended frame compatible
+    tx_frame.can_id = motor_id_ | CAN_EFF_FLAG | ROB_CMD::ROB_DISABLE;  // change according to the mode   extended frame compatible
     tx_frame.can_dlc = 0x08;
+
+    tx_frame.data[0] = 0x01;   // モーターにエラーがある場合、エラーをクリアする。
+    can_->transmit(tx_frame);
+    {
+        response_count_++;
+    }
 }
 
 void RobMotorDriver::write_register_rob(uint16_t rid, float value) {

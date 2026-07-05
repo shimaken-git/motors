@@ -59,6 +59,8 @@ enum ROB_REG {
     EPSCAN_TIME             = 0x7026,
     CAN_TIMEOUT             = 0x7028,
     ZERO_STATE              = 0x7029,
+    DAMPER                  = 0x702A,
+    ZERO_OFFSET             = 0x702B,
 };
 
 enum ROB_CMD {
@@ -97,6 +99,7 @@ class RobMotorDriver : public MotorDriver {
     virtual uint8_t init_motor() override;
     virtual void deinit_motor() override;
     virtual bool set_motor_zero() override;
+    virtual bool set_motor_offset(float offset) override;
     virtual bool write_motor_flash() override;
 
     virtual void get_motor_param(uint8_t param_cmd) override;

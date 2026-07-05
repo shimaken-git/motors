@@ -114,6 +114,8 @@ void DmMotorDriver::deinit_motor() {
 
 bool DmMotorDriver::write_motor_flash() { return true; }
 
+bool DmMotorDriver::set_motor_offset(float offset) { return true; }
+
 bool DmMotorDriver::set_motor_zero() {
     // send set zero command
     DmMotorDriver::set_motor_zero_dm();

@@ -75,6 +75,8 @@ class MotorDriver {
      */
     virtual bool set_motor_zero() = 0;
 
+    virtual bool set_motor_offset(float offset) = 0;
+
     virtual bool write_motor_flash() = 0;
 
     /**

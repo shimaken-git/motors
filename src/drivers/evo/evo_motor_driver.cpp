@@ -110,6 +110,8 @@ void EvoMotorDriver::deinit_motor() {
 
 bool EvoMotorDriver::write_motor_flash() { return true; }
 
+bool EvoMotorDriver::set_motor_offset(float offset) { return true; }
+
 bool EvoMotorDriver::set_motor_zero() {
     // send set zero command
     EvoMotorDriver::set_motor_zero_evo();
