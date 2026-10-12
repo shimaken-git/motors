@@ -2,9 +2,9 @@
 #include "rob_motor_driver.hpp"
 
 ROB_Limit_Param rob_limit_param[ROB_Num_Of_Model] = {
-    {12.5, 33, 14, 500, 5},   // RS00_48V   operation control mode
-    {12.5, 33, 60, 5000, 100},  // RS03_48V   operation control mode
-    {12.5, 20, 36, 5000, 100},  // RS06_48V   operation control mode
+    {12.566, 33, 14, 500, 5},   // RS00_48V   operation control mode
+    {12.566, 20, 60, 5000, 100},  // RS03_48V   operation control mode
+    {12.566, 50, 36, 5000, 100},  // RS06_48V   operation control mode
 };
 
 RobMotorDriver::RobMotorDriver(uint16_t motor_id, const std::string& interface_type, const std::string& can_interface,
