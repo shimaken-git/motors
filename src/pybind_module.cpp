@@ -45,5 +45,6 @@ PYBIND11_MODULE(motors_py, m) {
         .def("get_motor_spd", &MotorDriver::get_motor_spd)
         .def("get_motor_current", &MotorDriver::get_motor_current)
         .def("get_motor_temperature", &MotorDriver::get_motor_temperature)
-        .def("clear_motor_error", &MotorDriver::clear_motor_error);
+        .def("clear_motor_error", &MotorDriver::clear_motor_error)
+        .def("get_motor_timestamp", &MotorDriver::get_motor_timestamp);
 }

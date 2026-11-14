@@ -4,6 +4,7 @@
 #include <string>
 
 #include "motor_driver.hpp"
+#include "motor_time.hpp"
 #include "protocol/can/socket_can.hpp"
 enum DMError {
     DM_DOWN = 0x00,

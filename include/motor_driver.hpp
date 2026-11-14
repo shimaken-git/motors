@@ -210,6 +210,8 @@ class MotorDriver {
      */
     virtual float get_motor_temperature() { return motor_temperature_; }
 
+    virtual uint64_t get_motor_timestamp() { return motor_timestamp_; }
+
     virtual void clear_motor_error() = 0;
 
    protected:
@@ -225,6 +227,8 @@ class MotorDriver {
     std::atomic<float> motor_spd_{0.f};
     std::atomic<float> motor_current_{0.f};
     std::atomic<float> motor_temperature_{0.f};
+    std::atomic<uint64_t> motor_timestamp_{0};
+
 };
 
 using union32_t = union Union32 {

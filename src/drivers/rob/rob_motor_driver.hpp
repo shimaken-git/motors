@@ -4,6 +4,7 @@
 #include <string>
 
 #include "motor_driver.hpp"
+#include "motor_time.hpp"
 #include "protocol/can/socket_can.hpp"
 enum ROBError {
     ROBE_UNDERVOLT = 0x01,

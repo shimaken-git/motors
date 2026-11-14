@@ -160,6 +160,7 @@ void DmMotorDriver::can_rx_cbk(const can_frame& rx_frame) {
         range_map(t_int, uint16_t(0), bitmax<uint16_t>(12), -limit_param_.TauMax, limit_param_.TauMax);
     mos_temperature_ = rx_frame.data[6];
     motor_temperature_ = rx_frame.data[7];
+    motor_timestamp_ = monotonic_ns();
 }
 
 void DmMotorDriver::get_motor_param(uint8_t param_cmd) {

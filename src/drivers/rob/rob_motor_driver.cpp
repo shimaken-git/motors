@@ -122,6 +122,7 @@ void RobMotorDriver::can_rx_cbk(const can_frame& rx_frame) {
     motor_current_ =
         range_map(t_int, uint16_t(0), bitmax<uint16_t>(16), -limit_param_.TauMax, limit_param_.TauMax);
     motor_temperature_ = (rx_frame.data[6] << 8 | rx_frame.data[7]) * 0.1;
+    motor_timestamp_ = monotonic_ns();
 }
 
 void RobMotorDriver::get_motor_param(uint8_t param_cmd) {
